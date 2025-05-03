@@ -6,17 +6,9 @@ const PrayerSettingSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  latitude: {
-    type: Number,
-    required: true
-  },
-  longitude: {
-    type: Number,
-    required: true
-  },
   method: {
     type: String,
-    default: 'MuslimSalat'      // you could expand later
+    default: 'MuslimSalat'
   },
   updatedAt: {
     type: Date,

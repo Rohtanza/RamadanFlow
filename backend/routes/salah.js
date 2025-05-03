@@ -17,7 +17,6 @@ router.post('/log', auth, async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     if (err.code === 11000) {
-      // duplicate key: already logged
       return res.status(400).json({ msg: 'Already logged today' });
     }
     console.error(err);
@@ -72,7 +71,6 @@ router.get('/stats', auth, async (req, res) => {
   start.setDate(end.getDate() - (days - 1));
 
   try {
-    // aggregate logs by day
     const agg = await PrayerLog.aggregate([
       { $match: { user: req.user, date: { $gte: start, $lte: end } } },
       {
@@ -84,7 +82,6 @@ router.get('/stats', auth, async (req, res) => {
       { $sort: { '_id': 1 } }
     ]);
 
-    // fill in missing days with zero
     const result = [];
     for (let i = 0; i < days; i++) {
       const d = new Date(start);

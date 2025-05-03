@@ -3,32 +3,24 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const PrayerSetting = require('../models/PrayerSetting');
 const { fetchPrayerTimes } = require('../services/prayerService');
+const requestIp = require('request-ip'); 
+const axios = require('axios');
 
-// @route   GET /api/prayer/settings
-// @desc    Get current user’s prayer settings
-// @access  Private
+
 router.get('/settings', auth, async (req, res) => {
   const setting = await PrayerSetting.findOne({ user: req.user });
-  if (!setting) return res.json(null);
-  res.json(setting);
+  res.json(setting || null);
 });
 
-// @route   POST /api/prayer/settings
-// @desc    Create or update prayer settings
-// @access  Private
 router.post('/settings', auth, async (req, res) => {
-  const { latitude, longitude, method } = req.body;
+  const { method } = req.body;
   let setting = await PrayerSetting.findOne({ user: req.user });
   if (setting) {
-    setting.latitude = latitude;
-    setting.longitude = longitude;
     setting.method = method || setting.method;
     setting.updatedAt = Date.now();
   } else {
     setting = new PrayerSetting({
       user: req.user,
-      latitude,
-      longitude,
       method
     });
   }
@@ -36,24 +28,25 @@ router.post('/settings', auth, async (req, res) => {
   res.json(setting);
 });
 
-// @route   GET /api/prayer/today
-// @desc    Fetch today’s prayer times based on saved settings
-// @access  Private
 router.get('/today', auth, async (req, res) => {
-  const setting = await PrayerSetting.findOne({ user: req.user });
-  if (!setting) 
-    return res.status(400).json({ msg: 'No prayer settings found' });
-
   try {
-    const times = await fetchPrayerTimes(
-      setting.latitude,
-      setting.longitude
-    );
-    res.json(times);
+    const clientIp = requestIp.getClientIp(req);
+    const ip = clientIp === '::1' ? '' : clientIp;
+
+    const ipResponse = await axios.get(`https://ipwho.is/${ip}`);
+    const { latitude, longitude, city, success } = ipResponse.data;
+
+    if (!success) {
+      return res.status(500).json({ msg: 'Failed to get location from IP' });
+    }
+
+    const times = await fetchPrayerTimes(latitude, longitude);
+    res.json({ ...times, city });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Failed to fetch prayer times' });
   }
 });
+
 
 module.exports = router;
