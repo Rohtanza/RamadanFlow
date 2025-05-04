@@ -28,25 +28,28 @@ router.post('/settings', auth, async (req, res) => {
   res.json(setting);
 });
 
-router.get('/today', auth, async (req, res) => {
+router.get('/today',auth, async (req, res) => {
   try {
     const clientIp = requestIp.getClientIp(req);
-    const ip = clientIp === '::1' ? '' : clientIp;
+    const ip = '8.8.8.8';
 
     const ipResponse = await axios.get(`https://ipwho.is/${ip}`);
-    const { latitude, longitude, city, success } = ipResponse.data;
-
+    const { city, success } = ipResponse.data;
+    console.log("📍 IP Info:", ipResponse.data);
+    console.log("📍 City:", city);
     if (!success) {
       return res.status(500).json({ msg: 'Failed to get location from IP' });
     }
 
-    const times = await fetchPrayerTimes(latitude, longitude);
+    const times = await fetchPrayerTimes(city);
     res.json({ ...times, city });
   } catch (err) {
-    console.error(err);
+    console.error("ERROR in /today route:", err); 
     res.status(500).json({ msg: 'Failed to fetch prayer times' });
   }
 });
+
+
 
 
 module.exports = router;

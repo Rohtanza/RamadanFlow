@@ -2,20 +2,21 @@ import { useState, useEffect } from 'react';
 import { getToken } from '../services/authService';
 
 export default function PrayerTimes() {
-  const [times, setTimes] = useState(null);
+  const [times, setTimes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
         const token = getToken();
+        console.log("Token:", token);
         const res = await fetch('http://localhost:5000/api/prayer/today', {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log(res);
         if (res.ok) {
           setTimes(await res.json());
-          console.log(times);
+          console.log(res.json());
         }
       } catch (err) {
         console.error(err);
