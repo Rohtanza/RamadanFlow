@@ -1,42 +1,42 @@
-require('dotenv').config();
+// server.js
+require('dotenv').config();                             // loads backend/.env :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1}
 
-const express       = require('express');
-const mongoose      = require('mongoose');
-const cors          = require('cors');
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 const { OAuth2Client } = require('google-auth-library');
 
-const authRoutes     = require('./routes/auth');
-const prayerRoutes   = require('./routes/prayer');
-const salahRoutes    = require('./routes/salah');
-const quranRoutes    = require('./routes/quran');
-const tasbihRoutes   = require('./routes/tasbih');
-const calendarRoutes = require('./routes/calendar');
-const azkarRoutes    = require('./routes/azkar');
-const duaRoutes      = require('./routes/dua');
-const libraryRoutes  = require('./routes/library');
-const activityRoutes = require('./routes/activity');
-const eventsRoutes   = require('./routes/events');
+const authRoutes    = require('./routes/auth');
+const prayerRoutes  = require('./routes/prayer');
+const salahRoutes   = require('./routes/salah');
+const quranRoutes   = require('./routes/quran');
+const tasbihRoutes  = require('./routes/tasbih');
+const calendarRoutes= require('./routes/calendar');
+const azkarRoutes   = require('./routes/azkar');
+const duaRoutes     = require('./routes/dua');
+const libraryRoutes = require('./routes/library');
+const activityRoutes= require('./routes/activity');
+const eventsRoutes  = require('./routes/events');
 
 const app = express();
 
 // instantiate Google OAuth2 client
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// CORS: allow PATCH and preflight OPTIONS
 app.use(cors({
-    origin:      'http://localhost:3001',
+    origin: 'http://localhost:3001',
     credentials: true,
-    methods:     ['GET','POST','PATCH','PUT','DELETE','OPTIONS'],
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
     allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
 }));
 
-// cross-origin policies for Google Sign-In iframe/popups
-app.use((req, res, next) => {
-    res.setHeader('Cross-Origin-Opener-Policy',        'same-origin-allow-popups');
-    res.setHeader('Cross-Origin-Embedder-Policy',      'require-corp');
-    res.setHeader('Permissions-Policy',                'identity-credentials-get=(self)');
-    next();
-});
+// allow popups/iframe for GSI
+// app.use((req, res, next) => {
+//     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+//     res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+//     res.setHeader('Permissions-Policy', 'identity-credentials-get=(self)');
+//     next();
+// });
 
 app.use(express.json());
 
@@ -51,7 +51,10 @@ app.post('/api/auth/google', async (req, res) => {
             audience: process.env.GOOGLE_CLIENT_ID
         });
         const payload = ticket.getPayload();
-        // TODO: find or create user, then issue your own JWT/session cookie
+        // TODO: find or create a user in your DB based on payload.sub or payload.email
+        // then issue your own JWT/session cookie, e.g.:
+        // const user = await User.findOrCreate({ googleId: payload.sub, email: payload.email });
+        // const jwt = signJwt({ id: user.id });
         return res.json({ profile: payload /*, token: jwt */ });
     } catch (err) {
         console.error('Google token verification error:', err);
@@ -59,18 +62,18 @@ app.post('/api/auth/google', async (req, res) => {
     }
 });
 
-// application routes
-app.use('/api/auth',     authRoutes);
-app.use('/api/prayer',   prayerRoutes);
-app.use('/api/salah',    salahRoutes);
-app.use('/api/quran',    quranRoutes);
-app.use('/api/tasbih',   tasbihRoutes);
+// your existing routes
+app.use('/api/auth', authRoutes);
+app.use('/api/prayer', prayerRoutes);
+app.use('/api/salah',  salahRoutes);
+app.use('/api/quran',  quranRoutes);
+app.use('/api/tasbih', tasbihRoutes);
 app.use('/api/calendar', calendarRoutes);
-app.use('/api/dua',      duaRoutes);
-app.use('/api/azkar',    azkarRoutes);
-app.use('/api/library',  libraryRoutes);
-app.use('/api/activity', activityRoutes);
-app.use('/api/events',   eventsRoutes);
+app.use('/api/dua',    duaRoutes);
+app.use('/api/azkar',  azkarRoutes);
+app.use('/api/library',libraryRoutes);
+app.use('/api/activity',activityRoutes);
+app.use('/api/events', eventsRoutes);
 
 // health check
 app.get('/api/ping', (req, res) => res.json({ message: 'pong' }));
