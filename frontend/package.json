@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
-    "axios": "^1.9.0",
     "chart.js": "^4.4.9",
     "framer-motion": "^12.9.4",
     "html2pdf.js": "^0.10.3",

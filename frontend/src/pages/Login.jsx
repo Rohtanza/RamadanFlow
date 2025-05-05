@@ -70,11 +70,6 @@ export default function Login() {
     </div>
 
     <div id="google-btn" className="flex justify-center"></div>
-    <p className="mt-4 text-center">
-    <Link to="/forgot-password" className="text-yellow-400 hover:underline">
-    Forgot password?
-    </Link>
-    </p>
 
     <p className="text-center text-white mt-6">
     Don't have an account? <Link to="/register" className="hover:underline font-semibold">Register</Link>
