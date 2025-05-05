@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.home-wrapper {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: center;
+    align-items: center;
+    /* src/index.css or wherever you import global styles */  
+}
+
+.HijriCalendarWrapper{
+    
+}
+/* Hide scrollbar for all browsers */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, Opera */
+}

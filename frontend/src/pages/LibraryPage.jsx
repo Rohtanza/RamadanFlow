@@ -1,179 +1,175 @@
-import React, { useState, useEffect } from 'react';
+// frontend/src/pages/LibraryPage.jsx
+import { useState, useEffect } from 'react';
 import {
   fetchBooks,
   fetchChapters,
-  fetchHadiths,
-  fetchFavorites,
+  fetchChapterHadiths,
+  searchHadiths,
   addFavorite,
   removeFavorite
 } from '../services/libraryService';
 
 export default function LibraryPage() {
-  const [books, setBooks] = useState([]);
-  const [slug, setSlug] = useState('');
-  const [queryText, setQueryText] = useState('');
-  const [chapters, setChapters] = useState([]);
-  const [results, setResults] = useState(null); // null until search performed
-  const [favs, setFavs] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [books, setBooks]         = useState([]);
+  const [edition, setEdition]     = useState('');
+  const [chapters, setChapters]   = useState([]);
+  const [chapter, setChapter]     = useState('');
+  const [hadiths, setHadiths]     = useState([]);
+  const [query, setQuery]         = useState('');
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState('');
 
-  // Initial load: books + favorites
+  /* ------------ load book list ------------ */
   useEffect(() => {
-    (async () => {
-      try {
-        const [b, f] = await Promise.all([fetchBooks(), fetchFavorites()]);
-        setBooks(b);
-        setFavs(f);
-      } catch (e) {
-        console.error(e);
-        setError('Failed to load library');
-      }
-    })();
+    fetchBooks().then(setBooks).catch(e => setError(e.message));
   }, []);
-
-  // Handle book selection -> load chapters
-  const onBookSelect = async (e) => {
-    const s = e.target.value;
-    setSlug(s);
-    setResults(null);
-    setError('');
-    if (s) {
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        setLoading(true);
-        const [ch, data] = await Promise.all([
-          fetchChapters(s),
-                                             fetchHadiths({ book: s })
-        ]);
-        setChapters(ch);
-        setResults(data);
+        const result = await fetchBooks();
+        console.log("Fetched books:", result); // ✅ log here
+        setBooks(result);
       } catch (e) {
-        console.error(e);
-        setError('Failed to load hadiths for selected book');
-        setChapters([]);
-        setResults([]);
-      } finally {
-        setLoading(false);
+        setError(e.message);
       }
-    } else {
-      setChapters([]);
-      setResults(null);
-    }
-  };
+    };
+  
+    fetchData();
+  }, []);
+  
 
-  // Perform search
-  const onSearch = async () => {
+  /* ------------ when edition changes ------------ */
+  useEffect(() => {
+    if (!edition) return;
     setLoading(true);
-    setError('');
-    try {
-      const params = {};
-      if (queryText) params.hadithEnglish = queryText;
-      if (slug) params.book = slug;
-      const data = await fetchHadiths(params);
-      setResults(data);
-    } catch (e) {
-      console.error(e);
-      setError('Search failed');
-      setResults([]);
-    } finally {
-      setLoading(false);
+    fetchChapters(edition)
+    .then(setChapters)
+    .catch(e => setError(e.message))
+    .finally(() => setLoading(false));
+  }, [edition]);
+
+  /* ------------ when chapter changes ------------ */
+  useEffect(() => {
+    if (!chapter) return;
+    setLoading(true);
+    fetchChapterHadiths(edition, chapter)
+    .then(setHadiths)
+    .catch(e => setError(e.message))
+    .finally(() => setLoading(false));
+  }, [chapter]);
+
+  /* ------------ search ------------ */
+  const doSearch = async e => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    setLoading(true);
+    try   { setHadiths(await searchHadiths(edition, chapter, query)); }
+    catch (e){ setError(e.message); }
+    finally { setLoading(false); }
+  };
+
+  /* ------------ favourite toggle ------------ */
+  const toggleFavorite = async h => {
+    const existing = favorites.find(f => f.number === h.hadithNumber);
+    if (existing) {
+      await removeFavorite(existing._id);
+      setFavorites(fav => fav.filter(f => f._id !== existing._id));
+    } else {
+      const fav = await addFavorite({
+        edition,
+        chapter,
+        number : h.hadithNumber,
+        hadith : h
+      });
+      setFavorites(favList => [...favList, fav]);
     }
   };
 
-  // Favorite toggle
-  const toggleFav = async (hadith) => {
-    const exists = favs.find(
-      f => f.bookSlug === hadith.bookSlug && f.hadithNumber === hadith.hadithNumber
-    );
-    try {
-      if (exists) {
-        await removeFavorite(exists._id);
-        setFavs(prev => prev.filter(f => f._id !== exists._id));
-      } else {
-        const newFav = await addFavorite({
-          bookSlug: hadith.bookSlug,
-          hadithNumber: hadith.hadithNumber,
-          hadith
-        });
-        setFavs(prev => [...prev, newFav]);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
+  /* ============================================================ */
   return (
-    <div className="p-6 space-y-4 max-w-3xl mx-auto">
-    <h1 className="text-2xl font-semibold">Dua & Hadith Library</h1>
+    <div className="container mx-auto p-4">
+    <h1 className="text-2xl font-bold mb-4">Hadith Library</h1>
 
-    {error && <p className="text-red-500">{error}</p>}
+    {error && <p className="text-red-600">{error}</p>}
 
-    <div className="flex gap-4 items-end">
+    {/* ---- edition picker ---- */}
     <select
-    onChange={onBookSelect}
-    value={slug}
-    className="border p-2"
+    id="edition"
+    value={edition}
+    onChange={e => { setEdition(e.target.value); setChapter(''); }}
+    className="border p-2 mb-4 w-full md:w-1/3"
     >
-    <option value="">-- Select Book (optional) --</option>
+    <option value="">Select Book</option>
     {books.map(b => (
-      <option key={b.bookSlug} value={b.bookSlug}>
-      {b.bookName}
+      <option key={b.edition} value={b.edition}>
+      {b.name} ({b.language})
       </option>
     ))}
     </select>
 
-    <input
-    type="text"
-    placeholder="Search English..."
-    className="border p-2 flex-1"
-    value={queryText}
-    onChange={e => setQueryText(e.target.value)}
-    />
+    {/* ---- chapter picker ---- */}
+    {chapters.length > 0 && (
+      <select
+      id="chapter"
+      value={chapter}
+      onChange={e => setChapter(e.target.value)}
+      className="border p-2 mb-4 w-full md:w-1/3"
+      >
+      <option value="">Select Chapter</option>
+      {chapters.map(c => (
+        <option key={c.number} value={c.number}>
+        {c.number}. {c.title}
+        </option>
+      ))}
+      </select>
+    )}
 
-    <button
-    onClick={onSearch}
-    disabled={!queryText && !slug}
-    className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
-    >
-    Search
+    {/* ---- search ---- */}
+    {chapter && (
+      <form onSubmit={doSearch} className="mb-4">
+      <input
+      type="text"
+      placeholder="Search this chapter…"
+      value={query}
+      onChange={e => setQuery(e.target.value)}
+      className="border p-2 w-2/3 md:w-1/3"
+      />
+      <button className="ml-2 px-4 py-2 border">Search</button>
+      </form>
+    )}
+
+    {/* ---- loading ---- */}
+    {loading && <p>Loading…</p>}
+
+    {/* ---- hadith list ---- */}
+    {hadiths.map(h => (
+      <div key={h.hadithNumber} className="border p-4 mb-4 rounded">
+      <div className="flex justify-between items-center">
+      <strong>Hadith #{h.hadithNumber}</strong>
+      <button
+      onClick={() => toggleFavorite(h)}
+      className="text-yellow-500"
+      >
+      {favorites.some(f => f.number === h.hadithNumber)
+        ? '★ Remove'
+    : '☆ Add'}
     </button>
     </div>
 
-    {loading && <p>Searching…</p>}
-
-    {results === null ? null : (
-      results.length === 0 ? (
-        <p>No hadiths found.</p>
-      ) : (
-        <ul className="space-y-4">
-        {results.map(h => {
-          const isFav = favs.some(
-            f => f.bookSlug === h.bookSlug && f.hadithNumber === h.hadithNumber
-          );
-          return (
-            <li
-            key={`${h.bookSlug}-${h.hadithNumber}`}
-            className="border p-4 rounded"
-            >
-            <div className="flex justify-between">
-            <strong>
-            {h.bookSlug} #{h.hadithNumber}
-            </strong>
-            <button
-            onClick={() => toggleFav(h)}
-            className={isFav ? 'text-yellow-400' : 'text-gray-300'}
-            >
-            ★
-            </button>
-            </div>
-            <p className="italic mt-1">{h.hadithArabic}</p>
-            <p className="mt-2">{h.hadithEnglish}</p>
-            </li>
-          );
-        })}
-        </ul>
-      )
+    {/* Arabic */}
+    {h.arabicText && (
+      <p className="mt-2 text-right font-serif">{h.arabicText}</p>
     )}
+
+    {/* Any available translation */}
+    {h.englishText && <p className="mt-2">{h.englishText}</p>}
+    {h.urduText    && <p className="mt-2">{h.urduText}</p>}
+    {(!h.englishText && !h.urduText && !h.arabicText) && h.text && (
+      <p className="mt-2">{h.text}</p>
+    )}
+    </div>
+    ))}
     </div>
   );
 }
