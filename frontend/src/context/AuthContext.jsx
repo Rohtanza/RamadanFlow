@@ -7,14 +7,13 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // on mount, load user if token exists
   useEffect(() => {
     const token = getToken();
     if (token) {
       fetchMe()
-        .then(setUser)
-        .catch(() => clearToken())
-        .finally(() => setLoading(false));
+      .then(setUser)
+      .catch(() => clearToken())
+      .finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
@@ -32,14 +31,20 @@ export function AuthProvider({ children }) {
     setUser(me);
   };
 
+  const googleLoginUser = async (idToken) => {
+    await import('../services/authService').then(m => m.googleLogin(idToken));
+    const me = await fetchMe();
+    setUser(me);
+  };
+
   const logout = () => {
     clearToken();
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginUser, registerUser, logout, setUser }}>
-      {children}
+    <AuthContext.Provider value={{ user, loading, loginUser, registerUser, googleLoginUser, logout, setUser }}>
+    {children}
     </AuthContext.Provider>
   );
 }
