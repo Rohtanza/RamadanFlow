@@ -11,6 +11,7 @@ const { OAuth2Client } = require('google-auth-library');
 
 const { sendWelcomeEmail } = require('../services/emailService');
 const { sendWelcomeSMS }   = require('../services/smsService'); // optional
+const { forgotPasswordService, resetPasswordService } = require('../services/authService'); //for forget password service 
 
 // @route   POST /api/auth/register
 // @desc    Register new user (with reCAPTCHA)
@@ -174,5 +175,31 @@ router.get('/me', auth, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+
+// @route   POST /api/auth/forgot-password
+// @desc    Send password reset email with token link
+// @access  Public
+router.post('/forgot-password', async (req, res) => {
+    try {
+      const response = await forgotPasswordService(req.body.email);
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  });
+
+
+// @route   POST /api/auth/reset-password/:token
+// @desc    Reset password using the reset token
+// @access  Public
+router.post('/reset-password/:token', async (req, res) => {
+    try {
+      const response = await resetPasswordService(req.params.token, req.body.password);
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  });  
 
 module.exports = router;
