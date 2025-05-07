@@ -1,0 +1,147 @@
+/* PrayerTimes.css */
+
+/* Outer container (full-screen with background image) */
+.prayer-dashboard {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background-image: url('/home-back.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Gradient overlay */
+.prayer-dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
+  z-index: 1;
+}
+
+/* Main card container */
+.prayer-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 896px; /* Equivalent to Tailwind's max-w-4xl */
+  padding: 2rem; /* Equivalent to p-8 */
+  background-color: rgba(31, 41, 55, 0.8); /* Tailwind's bg-gray-800 with opacity */
+  backdrop-filter: blur(10px); /* Tailwind's backdrop-blur-lg */
+  border-radius: 1.5rem; /* Tailwind's rounded-3xl */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind's shadow-2xl */
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Tailwind's space-y-8 */
+}
+
+/* Heading */
+.prayer-title {
+  font-size: 2.25rem; /* Tailwind's text-4xl */
+  font-weight: 700; /* Tailwind's font-bold */
+  color: white;
+  text-align: center;
+}
+
+/* Location text */
+.location-text {
+  color: rgba(209, 213, 219, 1); /* Tailwind's text-gray-300 */
+  text-align: center;
+}
+
+/* Prayer section container */
+.prayer-section {
+  background-color: rgba(55, 65, 81, 0.5); /* Tailwind's bg-gray-700 with opacity */
+  padding: 1.5rem; /* Tailwind's p-6 */
+  border-radius: 1rem; /* Tailwind's rounded-2xl */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Tailwind's space-y-4 */
+}
+
+/* Section heading */
+.section-title {
+  font-size: 1.5rem; /* Tailwind's text-2xl */
+  color: white;
+}
+
+/* Prayer buttons grid */
+.prayer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Tailwind's grid-cols-2 */
+  gap: 1rem; /* Tailwind's gap-4 */
+}
+
+/* Prayer button */
+.prayer-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem; /* Tailwind's px-4 py-3 */
+  border-radius: 0.5rem; /* Tailwind's rounded-lg */
+  transition: background-color 0.2s ease; /* Tailwind's transition */
+  cursor: pointer;
+}
+
+.prayer-button.unchecked {
+  background-color: rgba(255, 255, 255, 0.2); /* Tailwind's bg-white bg-opacity-20 */
+  color: white;
+}
+
+.prayer-button.unchecked:hover {
+  background-color: rgba(255, 255, 255, 0.4); /* Tailwind's hover:bg-opacity-40 */
+}
+
+.prayer-button.checked {
+  background-color: rgba(234, 179, 8, 1); /* Tailwind's bg-yellow-500 */
+  color: rgba(17, 24, 39, 1); /* Tailwind's text-gray-900 */
+}
+
+/* Prayer time text */
+.prayer-time {
+  font-family: monospace; /* Tailwind's font-mono */
+}
+
+/* Completed prayers text */
+.completed-text {
+  color: rgba(209, 213  /* Tailwind's text-gray-300 */
+}
+
+/* Loading and error states */
+.loading-container,
+.error-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/home-back.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.loading-text {
+  color: white;
+  font-size: 1.5rem; /* Tailwind's text-2xl */
+  animation: pulse 1.5s infinite;
+}
+
+.error-text {
+  background-color: rgba(220, 38, 38, 0.75); /* Tailwind's bg-red-600 bg-opacity-75 */
+  padding: 1rem; /* Tailwind's p-4 */
+  border-radius: 0.5rem; /* Tailwind's rounded */
+  color: white;
+  font-size: 1.25rem; /* Tailwind's text-xl */
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

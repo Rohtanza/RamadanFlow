@@ -1,8 +1,11 @@
-const mongoose = require('mongoose')
+// backend/routes/salah.js
+
+const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const PrayerLog = require('../models/PrayerLog');
+const ActivityLog = require('../models/ActivityLog');  // ← import
 
 // @route   POST /api/salah/log
 // @desc    Log a prayer as completed
@@ -14,6 +17,14 @@ router.post('/log', auth, async (req, res) => {
     const logDate = new Date(date);
     const log = new PrayerLog({ user: req.user, prayer, date: logDate });
     await log.save();
+
+    // Activity log
+    await ActivityLog.create({
+      user: req.user,
+      action: 'PRAYER_LOG',
+      details: { prayer, date }
+    });
+
     res.json({ success: true });
   } catch (err) {
     if (err.code === 11000) {
@@ -34,6 +45,14 @@ router.delete('/log', auth, async (req, res) => {
   try {
     const logDate = new Date(date);
     await PrayerLog.findOneAndDelete({ user: req.user, prayer, date: logDate });
+
+    // Activity log
+    await ActivityLog.create({
+      user: req.user,
+      action: 'PRAYER_UNLOG',
+      details: { prayer, date }
+    });
+
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -74,17 +93,17 @@ router.get('/stats', auth, async (req, res) => {
   try {
     // aggregate logs by day
     const agg = await PrayerLog.aggregate([
-      { $match: { user: req.user, date: { $gte: start, $lte: end } } },
-      {
-        $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { '_id': 1 } }
+      { $match: { user: mongoose.Types.ObjectId(req.user), date: { $gte: start, $lte: end } } },
+                                          {
+                                            $group: {
+                                              _id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
+                                              count: { $sum: 1 }
+                                            }
+                                          },
+                                          { $sort: { '_id': 1 } }
     ]);
 
-    // fill in missing days with zero
+    // fill missing days
     const result = [];
     for (let i = 0; i < days; i++) {
       const d = new Date(start);

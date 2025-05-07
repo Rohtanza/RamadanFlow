@@ -1,27 +1,24 @@
+// backend/routes/tasbih.js
+
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const TasbihCounter = require('../models/TasbihCounter');
 
-// @route   GET /api/tasbih
-// @desc    List all counters for user
-// @access  Private
+// GET /api/tasbih
 router.get('/', auth, async (req, res) => {
-  const counters = await TasbihCounter.find({ user: req.user });
+  const counters = await TasbihCounter.find({ user: req.user }).sort('-createdAt');
   res.json(counters);
 });
 
-// @route   POST /api/tasbih
-// @desc    Create a new counter
-// @body    { name: String, target?: Number }
-// @access  Private
+// POST /api/tasbih
 router.post('/', auth, async (req, res) => {
   const { name, target } = req.body;
   try {
     const counter = new TasbihCounter({
       user: req.user,
       name,
-      target: target || undefined
+      target: target || 33
     });
     await counter.save();
     res.json(counter);
@@ -31,9 +28,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// @route   PATCH /api/tasbih/:id/inc
-// @desc    Increment counter by 1
-// @access  Private
+// PATCH /api/tasbih/:id/inc
 router.patch('/:id/inc', auth, async (req, res) => {
   try {
     const counter = await TasbihCounter.findOneAndUpdate(
@@ -49,9 +44,24 @@ router.patch('/:id/inc', auth, async (req, res) => {
   }
 });
 
-// @route   PATCH /api/tasbih/:id/reset
-// @desc    Reset counter to zero
-// @access  Private
+// PATCH /api/tasbih/:id/dec
+router.patch('/:id/dec', auth, async (req, res) => {
+  try {
+    const { step = 1 } = req.body;
+    const counter = await TasbihCounter.findOneAndUpdate(
+      { _id: req.params.id, user: req.user },
+      { $inc: { count: -Math.abs(step) } },
+                                                         { new: true }
+    );
+    if (!counter) return res.status(404).json({ msg: 'Not found' });
+    res.json(counter);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// PATCH /api/tasbih/:id/reset
 router.patch('/:id/reset', auth, async (req, res) => {
   try {
     const counter = await TasbihCounter.findOneAndUpdate(
@@ -67,9 +77,24 @@ router.patch('/:id/reset', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE /api/tasbih/:id
-// @desc    Delete a counter
-// @access  Private
+// PATCH /api/tasbih/:id
+router.patch('/:id', auth, async (req, res) => {
+  try {
+    const { name, target } = req.body;
+    const counter = await TasbihCounter.findOneAndUpdate(
+      { _id: req.params.id, user: req.user },
+      { name, target },
+      { new: true }
+    );
+    if (!counter) return res.status(404).json({ msg: 'Not found' });
+    res.json(counter);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// DELETE /api/tasbih/:id
 router.delete('/:id', auth, async (req, res) => {
   try {
     const result = await TasbihCounter.findOneAndDelete({
