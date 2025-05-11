@@ -1,10 +1,10 @@
-//frontend/src/pages/ResetPasswored.jsx
+//frontend/src/pages/ResetPassword.jsx
 
 import {useState,useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 
-export default function ResetPasswored()
+export default function ResetPassword()
 {
     const {token} = useParams();
     const nav = useNavigate();
@@ -13,17 +13,17 @@ export default function ResetPasswored()
     const [error, setError] = useState('');
 
     useEffect(()=>{
-        axios.get(`/api/auth/reset=password/${token}`)
+        axios.get(`/api/auth/reset=password/${token}`) //get method of axios
         .then(()=> setValid(true))
         .catch(()=>setError('Link invalid or expired. '));
-    },[token]);
+    },[token]);  // depending on token receieved //
 
 
     const handleSubmit = async e => {
         e.preventDefault();
 
         try{
-            await axios.post(`/api/auth/reset-password/${token}`,{password: pass});
+            await axios.post(`/api/auth/reset-password/${token}`,{password: pass}); //post method of axios
             nav('/login');
         }
         catch(err)
