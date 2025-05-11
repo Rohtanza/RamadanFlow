@@ -3,6 +3,7 @@ const Ruku = require('../models/Ruku');
 const Quran = require('../models/Quran');
 
 // Get list of Juz
+
 const getJuzList = async () => {
   try {
     const juzList = await Juz.find()
