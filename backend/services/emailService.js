@@ -23,6 +23,24 @@ transporter.verify()
  * @param {string} link - unique password reset URL (expires in 1 hour)
  */
 
+async function sendResetEmail(to, link) {
+  return transporter.sendMail({
+    from: `"Noor Al-Iman" <${process.env.SMTP_USER}@sandbox.smtp.mailtrap.io>`,
+    to,
+    subject: '🔒 Password Reset Request',
+    html: `
+    <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
+    <h2>Password Reset</h2>
+    <p>You requested a password reset for your Noor Al-Iman account.</p>
+    <p><a href="${link}" style="background: #facc15; color: #000; padding: 8px 12px; text-decoration: none; border-radius: 4px;">Reset Password</a></p>
+    <p style="font-size: 0.9em; color: #666;">This link expires in one hour.</p>
+    </div>
+    `
+  });
+}
+
+
+
 
 /**
  * Send a simple welcome email
