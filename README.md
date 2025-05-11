@@ -189,15 +189,11 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 
 ## Authors
 
-- Abdul Rehman (@rohtanza) - Lead Developer & Project Lead
-- Muhammad Talha (@mtalha-prodev) - Frontend Developer
-- Muhammad Hamza (@hamza-coder) - Backend Developer
+- Laiba Nadeem (22L-7998) 
+- Eman Awan (22L-7996) 
+- Attiya Hassan (22L-7865)
+- Muhammad Rehan (22P-9106) 
 
-## Acknowledgments
-
-- Thanks to all contributors who have helped Ramadan Flow grow
-- Special thanks to the open-source community for their invaluable tools and libraries
-- Inspired by the need for modern Islamic applications to enhance the Ramadan experience in the digital age
 
 ## Diagrams
 
@@ -207,4 +203,3 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 ### Application Architecture
 ![Application Architecture](docs/images/application-architecture.png)
 
-Note: The diagram images can be found in the `docs/images` directory. Please refer to these visual representations for a better understanding of the project structure and data relationships. 
