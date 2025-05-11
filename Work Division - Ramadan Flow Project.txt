@@ -1,0 +1,106 @@
+Work Division - Ramadan Flow Project
+
+Core Modules and Responsibilities
+
+Authentication & User Management
+    Lead: Muhammad Rehan & Attiya Hassan
+        * JWT-based authentication system 
+        * Google OAuth integration 
+        * User data validation and security 
+        * Password reset and recovery system 
+    Supporting Team:
+        * Laiba Nadeem: User interface design
+        * Eman Awan: Authentication forms and flows
+
+Prayer System & Qibla Finder
+    Lead: Laiba Nadeem & Eman Awan
+        * Prayer time calculations 
+        * Qibla direction algorithm 
+        * Prayer tracking interface 
+        * Prayer dashboard and notifications 
+    Supporting Team:
+        * Muhammad Rehan: Geolocation optimization
+        * Attiya Hassan: Data synchronization
+
+Quran Module & Bookmarks
+    Lead: Eman Awan & Muhammad Rehan
+        * Quran reader interface 
+        * Bookmark management 
+        * Search algorithms 
+        * Text indexing and optimization 
+    Supporting Team:
+        * Laiba Nadeem: Content organization
+        * Attiya Hassan: Data persistence
+
+Community & Social Features
+    Lead: Attiya Hassan & Laiba Nadeem
+        * Community backend structure 
+        * Data modeling and storage 
+        * User interaction design 
+        * Community guidelines and moderation 
+    Supporting Team:
+        * Muhammad Rehan: Real-time features
+        * Eman Awan: Frontend components
+
+Tasbih & Dhikr System
+    Lead: Muhammad Rehan & Eman Awan
+        * Offline functionality 
+        * Data synchronization 
+        * Counter interface 
+        * Animation effects 
+    Supporting Team:
+        * Attiya Hassan: Backend storage
+        * Laiba Nadeem: UX design
+
+Ramadan Goals & Analytics
+    Lead: Laiba Nadeem & Attiya Hassan
+        * Goal setting system 
+        * Progress tracking
+        * Analytics backend
+        * Data aggregation 
+    Supporting Team:
+        * Muhammad Rehan: Performance optimization
+        * Eman Awan: Visualization components
+
+Technical Infrastructure
+
+Frontend Architecture
+    Lead: Eman Awan & Laiba Nadeem
+        * Component structure 
+        * State management 
+        * UI/UX guidelines 
+        * Design system
+    Supporting Team:
+        * Muhammad Rehan: Performance optimization
+        * Attiya Hassan: Integration testing
+
+Backend Architecture
+    Lead: Muhammad Rehan & Attiya Hassan
+            * API architecture 
+            * Caching system 
+            * Database optimization 
+            * Server configuration 
+        Supporting Team:
+            * Laiba Nadeem: Documentation
+            * Eman Awan: API testing
+
+Testing & Deployment
+Quality Assurance
+    Lead: Attiya Hassan & Eman Awan
+            * Backend testing 
+            * API testing 
+            * Frontend testing 
+            * Integration testing 
+        Supporting Team:
+            * Muhammad Rehan: Performance testing
+            * Laiba Nadeem: User acceptance testing
+
+Deployment 
+Lead: Muhammad Rehan & Laiba Nadeem
+        * Environment configuration 
+        * Deployment documentation 
+    Supporting Team:
+        * Attiya Hassan: Security testing
+        * Eman Awan: Build optimization
+
+
