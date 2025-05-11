@@ -1,7 +1,8 @@
 // src/pages/HijriCalendar.jsx
 import React, { useState, useEffect } from 'react'
 import { fetchTodayCalendar } from '../services/calendarService'
-import NavBar from '../components/NavBar' // IMPORT NAVBAR
+import { motion } from 'framer-motion'
+import { FaMoon, FaSun, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa'
 
 export default function HijriCalendar() {
   const [data, setData] = useState(null)
@@ -13,115 +14,187 @@ export default function HijriCalendar() {
     setLoading(true)
     setError('')
     fetchTodayCalendar(date)
-    .then(cal => {
-      setData(cal)
-      setError('')
-    })
-    .catch(err => {
-      console.error(err)
-      setError('Could not load calendar data')
-      setData(null)
-    })
-    .finally(() => setLoading(false))
+      .then(cal => {
+        if (!cal || !cal.hijri || !cal.gregorian) {
+          throw new Error('Invalid calendar data received')
+        }
+        setData(cal)
+        setError('')
+      })
+      .catch(err => {
+        console.error(err)
+        setError('Could not load calendar data')
+        setData(null)
+      })
+      .finally(() => setLoading(false))
   }, [date])
 
   if (loading)
     return (
-      <>
-      <NavBar />
-      <div className="h-screen flex items-center justify-center bg-cover bg-center pt-20" style={{ backgroundImage: "url('/home-back.jpg')" }}>
-      <p className="text-white text-xl">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="text-center">
+          <FaMoon className="animate-pulse text-yellow-400 text-4xl mx-auto mb-4" />
+          <p className="text-white text-xl">Loading Calendar...</p>
+        </div>
       </div>
-      </>
     )
 
-    if (error)
-      return (
-        <>
-        <NavBar />
-        <div className="h-screen flex items-center justify-center bg-cover bg-center pt-20" style={{ backgroundImage: "url('/home-back.jpg')" }}>
-        <p className="text-red-400 text-xl bg-gray-800 bg-opacity-75 p-4 rounded">{error}</p>
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="text-center bg-red-900/20 backdrop-blur-sm p-6 rounded-lg">
+          <FaSun className="text-red-400 text-4xl mx-auto mb-4" />
+          <p className="text-red-400 text-xl">{error}</p>
         </div>
-        </>
-      )
+      </div>
+    )
 
-      if (!data) return null
+  if (!data || !data.hijri || !data.gregorian) return null
 
-        const { hijri, gregorian, upcomingEvents } = data
+  const { hijri, gregorian, upcomingEvents = [] } = data
 
-        return (
-          <>
-          <NavBar />
-          <div
-          className="min-h-screen w-full relative flex items-center justify-center bg-cover bg-center pt-20"
-          style={{
-            backgroundImage: "url('/home-back.jpg')",
-                fontFamily: "'Poppins', sans-serif"
-          }}
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
+  }
+
+  // Helper function to format date parts safely
+  const formatDatePart = (part) => String(part || '0').padStart(2, '0')
+
+  // Helper function to safely get nested properties
+  const getNestedValue = (obj, path, defaultValue = '') => {
+    try {
+      return path.split('.').reduce((acc, part) => acc[part], obj) || defaultValue
+    } catch {
+      return defaultValue
+    }
+  }
+
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+      <motion.div 
+        className="max-w-4xl mx-auto space-y-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Header */}
+        <div className="text-center">
+          <motion.div {...fadeIn} className="inline-block">
+            <FaMoon className="text-yellow-400 text-5xl mx-auto mb-4" />
+          </motion.div>
+          <motion.h1 {...fadeIn} className="text-4xl md:text-5xl font-bold text-white mb-2">
+            Islamic Calendar
+          </motion.h1>
+          <motion.p {...fadeIn} className="text-gray-400 text-lg">
+            Discover Islamic dates and upcoming events
+          </motion.p>
+        </div>
+
+        {/* Date Controls */}
+        <motion.div 
+          {...fadeIn}
+          className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl"
+        >
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="relative flex-1 w-full">
+              <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-yellow-400" />
+              <input
+                type="date"
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="w-full bg-white/5 border border-gray-700 text-white pl-10 pr-4 py-2 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all"
+              />
+            </div>
+            <button
+              onClick={() => setDate('')}
+              className="px-6 py-2 bg-yellow-400 hover:bg-yellow-300 text-gray-900 rounded-lg font-medium transition-colors shadow-lg hover:shadow-xl flex items-center gap-2"
+            >
+              <FaCalendarAlt />
+              Today
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Calendar Display */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Gregorian Date */}
+          <motion.div 
+            {...fadeIn}
+            className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl"
           >
-          {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/90" />
+            <div className="flex items-center gap-3 mb-4">
+              <FaSun className="text-yellow-400 text-2xl" />
+              <h2 className="text-xl font-semibold text-white">Gregorian Date</h2>
+            </div>
+            <p className="text-3xl font-bold text-white">
+              {getNestedValue(gregorian, 'numeric.year', new Date().getFullYear())}-
+              {formatDatePart(getNestedValue(gregorian, 'numeric.month'))}-
+              {formatDatePart(getNestedValue(gregorian, 'numeric.day'))}
+            </p>
+            <p className="text-gray-400 mt-2">{getNestedValue(gregorian, 'weekday.en', '')}</p>
+          </motion.div>
 
-          {/* Card Container */}
-          <div className="relative z-10 w-full max-w-lg p-8 bg-gray-800 bg-opacity-90 backdrop-blur-lg rounded-3xl shadow-2xl space-y-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white text-center">
-          Islamic & Gregorian Calendar
-          </h2>
-
-          {/* Date Picker */}
-          <div className="flex items-center justify-between bg-white bg-opacity-20 backdrop-blur-sm p-4 rounded-full">
-          <input
-          type="date"
-          value={date}
-          onChange={e => setDate(e.target.value)}
-          className="bg-transparent text-white placeholder-gray-300 px-3 py-1 border-b border-white/50 focus:outline-none"
-          />
-          <button
-          onClick={() => setDate('')}
-          className="px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-gray-900 rounded-full shadow transition"
+          {/* Hijri Date */}
+          <motion.div 
+            {...fadeIn}
+            className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl"
           >
-          Today
-          </button>
-          </div>
+            <div className="flex items-center gap-3 mb-4">
+              <FaMoon className="text-yellow-400 text-2xl" />
+              <h2 className="text-xl font-semibold text-white">Hijri Date</h2>
+            </div>
+            <p className="text-3xl font-bold text-white">
+              {getNestedValue(hijri, 'numeric.year', '')}-
+              {formatDatePart(getNestedValue(hijri, 'numeric.month'))}-
+              {formatDatePart(getNestedValue(hijri, 'numeric.day'))}
+            </p>
+            <p className="text-gray-400 mt-2">{getNestedValue(hijri, 'month.en', '')}</p>
+          </motion.div>
+        </div>
 
-          {/* Dates Display */}
-          <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white bg-opacity-20 backdrop-blur-sm p-4 rounded-lg text-center">
-          <h3 className="font-semibold text-yellow-300">Gregorian</h3>
-          <p className="mt-1 text-2xl font-medium text-white">
-          {gregorian.numeric.year}-
-          {String(gregorian.numeric.month).padStart(2, '0')}-
-          {String(gregorian.numeric.day).padStart(2, '0')}
-          </p>
+        {/* Location Info */}
+        <motion.div 
+          {...fadeIn}
+          className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <FaMapMarkerAlt className="text-yellow-400 text-2xl" />
+            <h2 className="text-xl font-semibold text-white">Location</h2>
           </div>
-          <div className="bg-white bg-opacity-20 backdrop-blur-sm p-4 rounded-lg text-center">
-          <h3 className="font-semibold text-yellow-300">Hijri</h3>
-          <p className="mt-1 text-2xl font-medium text-white">
-          {hijri.numeric.year}-
-          {String(hijri.numeric.month).padStart(2, '0')}-
-          {String(hijri.numeric.day).padStart(2, '0')}
-          </p>
-          </div>
-          </div>
+          <p className="text-gray-400">Calculations based on Karachi, Pakistan</p>
+        </motion.div>
 
-          {/* Upcoming Events */}
-          <div className="space-y-4">
-          <h3 className="text-2xl font-semibold text-white text-center">Upcoming Islamic Events</h3>
+        {/* Upcoming Events */}
+        <motion.div 
+          {...fadeIn}
+          className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl"
+        >
+          <h2 className="text-2xl font-semibold text-white mb-6">Upcoming Islamic Events</h2>
           {upcomingEvents.length > 0 ? (
-            <ul className="space-y-3">
-            {upcomingEvents.map(ev => (
-              <li key={ev.hijriDate} className="flex justify-between items-center bg-white bg-opacity-20 backdrop-blur-sm p-3 rounded-lg">
-              <span className="text-white font-medium">{ev.name}</span>
-              <span className="text-yellow-300">{ev.hijriDate}</span>
-              </li>
-            ))}
-            </ul>
+            <div className="space-y-4">
+              {upcomingEvents.map((ev, index) => (
+                <motion.div
+                  key={ev.hijriDate || index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <FaMoon className="text-yellow-400" />
+                    <span className="text-white font-medium">{ev.name || 'Unknown Event'}</span>
+                  </div>
+                  <span className="text-yellow-400 mt-2 sm:mt-0">{ev.hijriDate || 'Date not available'}</span>
+                </motion.div>
+              ))}
+            </div>
           ) : (
-            <p className="text-center text-gray-300">No upcoming events.</p>
+            <p className="text-center text-gray-400">No upcoming events.</p>
           )}
-          </div>
-          </div>
-          </div>
-          </>
-        )
+        </motion.div>
+      </motion.div>
+    </div>
+  )
 }

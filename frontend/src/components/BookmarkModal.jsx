@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export default function BookmarkModal({ isOpen, onClose, onSave, category, setCategory, note, setNote }) {

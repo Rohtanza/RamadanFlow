@@ -13,9 +13,13 @@ export const useNotification = () => {
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
-  const addNotification = (message, type = 'success') => {
+  const addNotification = (notification, type = 'success') => {
     const id = Date.now();
-    setNotifications((prev) => [...prev, { id, message, type }]);
+    const notificationData = typeof notification === 'string' 
+      ? { id, message: notification, type }
+      : { id, ...notification };
+    
+    setNotifications((prev) => [...prev, notificationData]);
     
     // Auto remove notification after 5 seconds
     setTimeout(() => {

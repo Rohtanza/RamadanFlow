@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Register() {
+  const { addNotification } = useNotification();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,13 +19,17 @@ export default function Register() {
     e.preventDefault();
     if (!captcha) {
       setError('Please complete the captcha');
+      addNotification('Please complete the captcha', 'warning');
       return;
     }
     try {
       await registerUser({ name, email, password, captcha });
+      addNotification('Registration successful! Welcome to Noor Al-Iman', 'success');
       navigate('/');
     } catch (err) {
-      setError(err.errors?.[0]?.msg || 'Registration failed');
+      const errorMessage = err.errors?.[0]?.msg || 'Registration failed';
+      setError(errorMessage);
+      addNotification(errorMessage, 'error');
     }
   };
 

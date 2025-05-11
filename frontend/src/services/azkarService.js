@@ -2,10 +2,7 @@
 
 import { getToken } from './authService'
 
-const API_ROOT = 'http://localhost:5000/api/azkar'
-function authHeaders() {
-  return { Authorization: `Bearer ${getToken()}` }
-}
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 const ENDPOINTS = {
   m: 'morning',
@@ -21,8 +18,8 @@ export async function fetchAzkar(category) {
   const ep = ENDPOINTS[category]
   if (!ep) throw new Error(`Unknown Azkar category "${category}"`)
 
-    const res = await fetch(`${API_ROOT}/${ep}`, {
-      headers: authHeaders()
+    const res = await fetch(`${API_URL}/azkar/${ep}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
     })
     if (!res.ok) {
       throw new Error(`Failed to load ${ep} Azkar: status ${res.status}`)

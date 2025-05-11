@@ -16,8 +16,7 @@ export async function fetchTodayCalendar(calendarDate) {
   }
   const res = await fetch(url.toString(), {
     headers: {
-      Authorization: `Bearer ${getToken()}`,
-                          'Content-Type': 'application/json'
+      'Content-Type': 'application/json'
     }
   })
   if (!res.ok) {

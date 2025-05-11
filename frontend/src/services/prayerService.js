@@ -1,30 +1,63 @@
-// frontend/src/services/prayerService.js
+// Simple prayer service
+import axios from 'axios';
 import { getToken } from './authService';
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/prayer';
+import { formatDate } from '../utils/dateUtils';
 
-/**
- * Save user’s location & method into DB
- */
-export async function savePrayerSettings({ latitude, longitude, method }) {
-    const res = await fetch(`${API}/settings`, {
-        method: 'POST',
-        headers: {
-            'Content-Type':'application/json',
-            Authorization: `Bearer ${getToken()}`
-        },
-        body: JSON.stringify({ latitude, longitude, method })
-    });
-    if (!res.ok) throw await res.json();
-    return res.json();
-}
+const API_BASE = 'http://localhost:5000/api';
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
-/**
- * Fetch today’s prayer times from backend
- */
-export async function fetchTodayPrayerTimes() {
-    const res = await fetch(`${API}/today`, {
-        headers: { Authorization: `Bearer ${getToken()}` }
-    });
-    if (!res.ok) throw await res.json();
-    return res.json();
-}
+// Simple axios instance
+const api = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Add auth token
+api.interceptors.request.use(config => {
+  const token = getToken();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// Handle response errors
+api.interceptors.response.use(
+  response => response,
+  error => {
+    console.error('API Error:', error?.response?.data || error.message);
+    throw error?.response?.data || { msg: 'An unexpected error occurred.' };
+  }
+);
+
+export const getPrayerTimes = async (latitude, longitude, method = 'Karachi') => {
+  const response = await api.post('/prayer/times', { latitude, longitude, method });
+  return response.data;
+};
+
+export const togglePrayer = async (prayer) => {
+  const date = formatDate();
+  const response = await api.post('/prayer/log', { prayer, date });
+  return response.data;
+};
+
+export const getPrayerStats = async (days = 7) => {
+  const response = await api.get('/prayer/stats', { params: { days } });
+  return response.data;
+};
+
+export const getLocationName = async (latitude, longitude) => {
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json?access_token=${MAPBOX_TOKEN}&types=place`
+    );
+    if (response.ok) {
+      const data = await response.json();
+      return data.features?.[0]?.text || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+    }
+    return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+  } catch (error) {
+    console.warn('Failed to get location name:', error);
+    return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+  }
+};

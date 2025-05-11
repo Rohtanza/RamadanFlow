@@ -1,3 +1,5 @@
+// src/pages/SalahTracker.jsx
+
 import { useState, useEffect } from 'react';
 import { getToken } from '../services/authService';
 import Modal from '../components/Modal';
@@ -18,15 +20,19 @@ export default function SalahTracker() {
   const token = getToken();
   const today = formatDate(new Date());
 
+  // Fetch today's logs & weekly stats
   useEffect(() => {
     async function load() {
       try {
+        // 1) Today’s logs
         const logRes = await fetch(
           `http://localhost:5000/api/salah/logs?start=${today}&end=${today}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const logData = await logRes.json();
         setTodayLogs(logData.map(l => l.prayer));
+
+        // 2) Weekly stats (last 7 days)
         const statsRes = await fetch(
           `http://localhost:5000/api/salah/stats?days=7`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -41,6 +47,8 @@ export default function SalahTracker() {
     }
     load();
   }, [token, today]);
+
+  // Perform the actual toggle (POST or DELETE)
   const performToggle = async (prayer) => {
     const body = JSON.stringify({ prayer, date: today });
     const opts = {

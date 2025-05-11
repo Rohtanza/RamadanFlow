@@ -1,19 +1,463 @@
+/* Import fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Theme Variables */
+:root {
+  /* Light Theme */
+  --light-primary: #ffffff;
+  --light-secondary: #f3f4f6;
+  --light-accent: #f59e0b;
+  --light-text-primary: #1f2937;
+  --light-text-secondary: #4b5563;
+  --light-border: #e5e7eb;
+  --light-hover: #e5e7eb;
+  --light-card: #ffffff;
+  --light-card-hover: #f9fafb;
+  --light-shadow: rgba(0, 0, 0, 0.1);
+  --light-overlay: rgba(0, 0, 0, 0.5);
 
-.home-wrapper {
-    display: flex;
-    flex-flow: column wrap;
-    justify-content: center;
-    align-items: center;
-    /* src/index.css or wherever you import global styles */  
+  /* Dark Theme */
+  --dark-primary: #111827;
+  --dark-secondary: #1f2937;
+  --dark-accent: #f59e0b;
+  --dark-text-primary: #f9fafb;
+  --dark-text-secondary: #d1d5db;
+  --dark-border: #374151;
+  --dark-hover: #374151;
+  --dark-card: #1f2937;
+  --dark-card-hover: #374151;
+  --dark-shadow: rgba(0, 0, 0, 0.3);
+  --dark-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Sepia Theme */
+  --sepia-primary: #fdf8f3;
+  --sepia-secondary: #f5e6d3;
+  --sepia-accent: #d97706;
+  --sepia-text-primary: #4a5568;
+  --sepia-text-secondary: #718096;
+  --sepia-border: #e2d5c5;
+  --sepia-hover: #e2d5c5;
+  --sepia-card: #fdf8f3;
+  --sepia-card-hover: #f5e6d3;
+  --sepia-shadow: rgba(0, 0, 0, 0.15);
+  --sepia-overlay: rgba(0, 0, 0, 0.4);
 }
 
-.HijriCalendarWrapper{
-    
+/* Theme Classes */
+.theme-light {
+  --theme-primary: var(--light-primary);
+  --theme-secondary: var(--light-secondary);
+  --theme-accent: var(--light-accent);
+  --theme-text-primary: var(--light-text-primary);
+  --theme-text-secondary: var(--light-text-secondary);
+  --theme-border: var(--light-border);
+  --theme-hover: var(--light-hover);
+  --theme-card: var(--light-card);
+  --theme-card-hover: var(--light-card-hover);
+  --theme-shadow: var(--light-shadow);
+  --theme-overlay: var(--light-overlay);
 }
+
+.theme-dark {
+  --theme-primary: var(--dark-primary);
+  --theme-secondary: var(--dark-secondary);
+  --theme-accent: var(--dark-accent);
+  --theme-text-primary: var(--dark-text-primary);
+  --theme-text-secondary: var(--dark-text-secondary);
+  --theme-border: var(--dark-border);
+  --theme-hover: var(--dark-hover);
+  --theme-card: var(--dark-card);
+  --theme-card-hover: var(--dark-card-hover);
+  --theme-shadow: var(--dark-shadow);
+  --theme-overlay: var(--dark-overlay);
+}
+
+.theme-sepia {
+  --theme-primary: var(--sepia-primary);
+  --theme-secondary: var(--sepia-secondary);
+  --theme-accent: var(--sepia-accent);
+  --theme-text-primary: var(--sepia-text-primary);
+  --theme-text-secondary: var(--sepia-text-secondary);
+  --theme-border: var(--sepia-border);
+  --theme-hover: var(--sepia-hover);
+  --theme-card: var(--sepia-card);
+  --theme-card-hover: var(--sepia-card-hover);
+  --theme-shadow: var(--sepia-shadow);
+  --theme-overlay: var(--sepia-overlay);
+}
+
+/* Base Styles */
+body {
+  background-color: var(--theme-primary);
+  color: var(--theme-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Card Styles */
+.card {
+  background-color: var(--theme-card);
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 4px 6px var(--theme-shadow);
+}
+
+.card:hover {
+  background-color: var(--theme-card-hover);
+}
+
+/* Button Styles */
+.btn {
+  background-color: var(--theme-secondary);
+  color: var(--theme-text-primary);
+  border: 1px solid var(--theme-border);
+}
+
+.btn:hover {
+  background-color: var(--theme-hover);
+}
+
+.btn-accent {
+  background-color: var(--theme-accent);
+  color: var(--theme-primary);
+}
+
+/* Text Styles */
+.text-primary {
+  color: var(--theme-text-primary);
+}
+
+.text-secondary {
+  color: var(--theme-text-secondary);
+}
+
+/* Input Styles */
+input, select, textarea {
+  background-color: var(--theme-secondary);
+  color: var(--theme-text-primary);
+  border: 1px solid var(--theme-border);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--theme-accent);
+  outline: none;
+}
+
+/* Modal Styles */
+.modal {
+  background-color: var(--theme-primary);
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 4px 6px var(--theme-shadow);
+}
+
+.modal-overlay {
+  background-color: var(--theme-overlay);
+}
+
+/* Quran Reader Specific Styles */
+.quran-card {
+  background-color: var(--theme-card);
+  border: 1px solid var(--theme-border);
+  box-shadow: 0 4px 6px var(--theme-shadow);
+}
+
+.quran-card:hover {
+  background-color: var(--theme-card-hover);
+}
+
+.arabic-text {
+  color: var(--theme-accent);
+}
+
+.translation-text {
+  color: var(--theme-text-secondary);
+}
+
+/* Settings Modal Specific Styles */
+.settings-modal {
+  background-color: var(--theme-primary);
+  border: 1px solid var(--theme-border);
+}
+
+.settings-option {
+  background-color: var(--theme-secondary);
+  color: var(--theme-text-primary);
+  border: 1px solid var(--theme-border);
+}
+
+.settings-option:hover {
+  background-color: var(--theme-hover);
+}
+
+.settings-option.active {
+  background-color: var(--theme-accent);
+  color: var(--theme-primary);
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background-color: var(--theme-secondary);
+  border-right: 1px solid var(--theme-border);
+}
+
+.sidebar-item {
+  color: var(--theme-text-primary);
+}
+
+.sidebar-item:hover {
+  background-color: var(--theme-hover);
+}
+
+.sidebar-item.active {
+  background-color: var(--theme-accent);
+  color: var(--theme-primary);
+}
+
+/* Font Size Classes */
+.text-quran-small {
+  font-size: 1.5rem;
+  line-height: 2.5rem;
+}
+
+.text-quran-medium {
+  font-size: 2rem;
+  line-height: 3rem;
+}
+
+.text-quran-large {
+  font-size: 2.5rem;
+  line-height: 3.5rem;
+}
+
+.text-quran-xlarge {
+  font-size: 3.5rem;
+  line-height: 1.75;
+}
+
+.text-quran-xxlarge {
+  font-size: 5rem;
+  line-height: 1.2;
+}
+
+.text-translation-small {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+}
+
+.text-translation-medium {
+  font-size: 1rem;
+  line-height: 1.75rem;
+}
+
+.text-translation-large {
+  font-size: 1.125rem;
+  line-height: 2rem;
+}
+
+.text-translation-xlarge {
+  font-size: 1.25rem;
+  line-height: 2.25rem;
+}
+
+.text-urdu-small {
+  font-size: 1rem;
+  line-height: 1.75rem;
+}
+
+.text-urdu-medium {
+  font-size: 1.125rem;
+  line-height: 2rem;
+}
+
+.text-urdu-large {
+  font-size: 1.25rem;
+  line-height: 2.25rem;
+}
+
+.text-urdu-xlarge {
+  font-size: 2rem;
+  line-height: 2;
+}
+
+.text-urdu-xxlarge {
+  font-size: 3rem;
+  line-height: 2.2;
+}
+
+/* Utility Classes */
+.bg-theme-primary {
+  background-color: var(--theme-primary);
+}
+
+.bg-theme-secondary {
+  background-color: var(--theme-secondary);
+}
+
+.text-theme-primary {
+  color: var(--theme-text-primary);
+}
+
+.text-theme-secondary {
+  color: var(--theme-text-secondary);
+}
+
+.border-theme {
+  border-color: var(--theme-border);
+}
+
+.hover\:bg-theme-hover:hover {
+  background-color: var(--theme-hover);
+}
+
+.focus\:ring-theme-accent:focus {
+  --tw-ring-color: var(--theme-accent);
+}
+
+.accent-theme {
+  color: var(--theme-accent);
+}
+
+.bg-accent-theme {
+  background-color: var(--theme-accent);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .text-quran-xlarge {
+    font-size: 2.5rem;
+    line-height: 3.5rem;
+  }
+  
+  .text-translation-xlarge {
+    font-size: 1.125rem;
+    line-height: 2rem;
+  }
+  
+  .text-urdu-xlarge {
+    font-size: 1.25rem;
+    line-height: 2.25rem;
+  }
+}
+
+/* Font families */
+.font-amiri {
+  font-family: 'Amiri', serif;
+}
+
+.font-scheherazade {
+  font-family: 'Scheherazade New', serif;
+}
+
+.font-noto-naskh {
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+/* Font Sizes - Arabic */
+.text-quran-small {
+  font-size: 2rem;
+  line-height: 2.5;
+}
+
+.text-quran-medium {
+  font-size: 2.5rem;
+  line-height: 2.25;
+}
+
+.text-quran-large {
+  font-size: 3rem;
+  line-height: 2;
+}
+
+.text-quran-xlarge {
+  font-size: 3.5rem;
+  line-height: 1.75;
+}
+
+/* Font Sizes - English */
+.text-translation-small {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.text-translation-medium {
+  font-size: 1.25rem;
+  line-height: 1.75;
+}
+
+.text-translation-large {
+  font-size: 1.5rem;
+  line-height: 1.75;
+}
+
+.text-translation-xlarge {
+  font-size: 1.75rem;
+  line-height: 1.75;
+}
+
+/* Font Sizes - Urdu */
+.text-urdu-small {
+  font-size: 1.25rem;
+  line-height: 2;
+}
+
+.text-urdu-medium {
+  font-size: 1.5rem;
+  line-height: 2;
+}
+
+.text-urdu-large {
+  font-size: 1.75rem;
+  line-height: 2;
+}
+
+.text-urdu-xlarge {
+  font-size: 2rem;
+  line-height: 2;
+}
+
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Arabic text styles */
+.arabic-text {
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+  direction: rtl;
+  line-height: 2;
+  font-size: 1.5rem;
+}
+
+.urdu-text {
+  font-family: 'Noto Naskh Arabic', serif;
+  direction: rtl;
+  line-height: 2;
+  font-size: 1.25rem;
+}
+
 /* Hide scrollbar for all browsers */
 .no-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */

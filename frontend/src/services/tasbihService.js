@@ -1,73 +1,87 @@
 // src/services/tasbihService.js
 
-import { getToken } from './authService';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-const API_BASE = import.meta.env.VITE_API_URL.replace(/\/$/, '');
-const TASBIH_URL = `${API_BASE}/tasbih`;
+const getAuthHeader = () => {
+  const token = localStorage.getItem('auth_token');
+  console.log('Auth token:', token);
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  console.log('Request headers:', headers);
+  return headers;
+};
 
-function authHeaders() {
-  return { Authorization: `Bearer ${getToken()}` };
-}
-
-export async function listCounters() {
-  const res = await fetch(TASBIH_URL, { headers: authHeaders() });
-  if (!res.ok) throw new Error('Failed to load counters');
+export const listCounters = async () => {
+  const res = await fetch(`${API_URL}/tasbih`, {
+    headers: getAuthHeader()
+  });
+  if (!res.ok) throw new Error('Failed to fetch counters');
   return res.json();
-}
+};
 
-export async function createCounter(name, target) {
-  const res = await fetch(TASBIH_URL, {
+export const getCategories = async () => {
+  const res = await fetch(`${API_URL}/tasbih/categories`, {
+    headers: getAuthHeader()
+  });
+  if (!res.ok) throw new Error('Failed to fetch categories');
+  return res.json();
+};
+
+export const createCounter = async (name, target, description = '', category = 'Other') => {
+  const res = await fetch(`${API_URL}/tasbih`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
-                          body: JSON.stringify({ name, target })
+    headers: getAuthHeader(),
+    body: JSON.stringify({ name, target, description, category })
   });
   if (!res.ok) throw new Error('Failed to create counter');
   return res.json();
-}
+};
 
-export async function incrementCounter(id) {
-  const res = await fetch(`${TASBIH_URL}/${id}/inc`, {
+export const incrementCounter = async (id) => {
+  const res = await fetch(`${API_URL}/tasbih/${id}/inc`, {
     method: 'PATCH',
-    headers: authHeaders()
+    headers: getAuthHeader()
   });
-  if (!res.ok) throw new Error('Failed to increment');
+  if (!res.ok) throw new Error('Failed to increment counter');
   return res.json();
-}
+};
 
-export async function decrementCounter(id, step = 1) {
-  const res = await fetch(`${TASBIH_URL}/${id}/dec`, {
+export const decrementCounter = async (id, step = 1) => {
+  const res = await fetch(`${API_URL}/tasbih/${id}/dec`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
-                          body: JSON.stringify({ step })
+    headers: getAuthHeader(),
+    body: JSON.stringify({ step })
   });
-  if (!res.ok) throw new Error('Failed to decrement');
+  if (!res.ok) throw new Error('Failed to decrement counter');
   return res.json();
-}
+};
 
-export async function resetCounter(id) {
-  const res = await fetch(`${TASBIH_URL}/${id}/reset`, {
+export const resetCounter = async (id) => {
+  const res = await fetch(`${API_URL}/tasbih/${id}/reset`, {
     method: 'PATCH',
-    headers: authHeaders()
+    headers: getAuthHeader()
   });
-  if (!res.ok) throw new Error('Failed to reset');
+  if (!res.ok) throw new Error('Failed to reset counter');
   return res.json();
-}
+};
 
-export async function updateCounter(id, name, target) {
-  const res = await fetch(`${TASBIH_URL}/${id}`, {
+export const updateCounter = async (id, name, target, description, category) => {
+  const res = await fetch(`${API_URL}/tasbih/${id}`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', ...authHeaders() },
-                          body: JSON.stringify({ name, target })
+    headers: getAuthHeader(),
+    body: JSON.stringify({ name, target, description, category })
   });
-  if (!res.ok) throw new Error('Failed to update');
+  if (!res.ok) throw new Error('Failed to update counter');
   return res.json();
-}
+};
 
-export async function deleteCounter(id) {
-  const res = await fetch(`${TASBIH_URL}/${id}`, {
+export const deleteCounter = async (id) => {
+  const res = await fetch(`${API_URL}/tasbih/${id}`, {
     method: 'DELETE',
-    headers: authHeaders()
+    headers: getAuthHeader()
   });
-  if (!res.ok) throw new Error('Failed to delete');
+  if (!res.ok) throw new Error('Failed to delete counter');
   return res.json();
-}
+};

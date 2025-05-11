@@ -1,0 +1,86 @@
+@font-face {
+  font-family: 'Amiri';
+  src: url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap');
+}
+
+.font-arabic {
+  font-family: 'Amiri', serif;
+  line-height: 2;
+}
+
+.quran-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.verse-number {
+  font-size: 0.875rem;
+  color: #666;
+  margin-right: 0.5rem;
+}
+
+.verse-text {
+  margin-bottom: 1.5rem;
+}
+
+.arabic-text {
+  font-size: 1.75rem;
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.translation-text {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #333;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+}
+
+.audio-player {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.select-container {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.select-container select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+}
+
+.navigation-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.navigation-button:hover {
+  opacity: 0.9;
+}
+
+.play-button {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.prev-next-button {
+  background-color: #e5e7eb;
+  color: #374151;
+} 
