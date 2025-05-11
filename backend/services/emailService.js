@@ -18,6 +18,13 @@ transporter.verify()
 .catch(err=>console.error('❌ SMTP transporter error:', err))
 
 /**
+ * Send a password reset email with a secure link
+ * @param {string} to   - recipient's email address
+ * @param {string} link - unique password reset URL (expires in 1 hour)
+ */
+
+
+/**
  * Send a simple welcome email
  * @param {string} to   - recipient email
  * @param {string} name - user’s name for personalization
