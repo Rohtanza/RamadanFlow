@@ -62,4 +62,5 @@ async function sendWelcomeEmail(to, name) {
     `
   });
 }
-module.exports = { sendWelcomeEmail };
+module.exports = {sendResetEmail,
+   sendWelcomeEmail }; // <- export it here
