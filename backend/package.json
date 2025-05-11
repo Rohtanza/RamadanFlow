@@ -24,7 +24,7 @@
     "jwt-decode": "^4.0.0",
     "moment-hijri": "^3.0.0",
     "mongoose": "^8.14.0",
-    "nodemailer": "^7.0.0",
+    "nodemailer": "^7.0.2",
     "twilio": "^5.5.2"
   },
   "devDependencies": {
