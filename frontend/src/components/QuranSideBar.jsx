@@ -6,6 +6,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
+//QuranSideBar
 export default function QuranSidebar({
   surahList,
   selectedSurah,
