@@ -48,15 +48,18 @@ async function sendResetEmail(to, link) {
  * @param {string} name - user’s name for personalization
  */
 async function sendWelcomeEmail(to, name) {
-  const info = await transporter.sendMail({
-    from:    `"Noor Al-Iman" <${process.env.SMTP_FROM}>`,
+  return transporter.sendMail({
+    from: `"Noor Al-Iman" <${process.env.SMTP_USER}@sandbox.smtp.mailtrap.io>`,
     to,
-    subject: 'Welcome to Noor Al-Iman',
-    html:    `<p>As­salaamu Alaikum <strong>${name}</strong>,</p>
-              <p>Thank you for registering at Noor Al-Iman. We’re honored to have you on board!</p>
-              <p>— The Noor Al-Iman Team</p>`
+    subject: '🎉 Welcome to Noor Al-Iman',
+    html: `
+    <div style="font-family: sans-serif; color: #333;">
+    <h2>Assalamualaikum, ${name}!</h2>
+    <p>Thanks for registering at Noor Al-Iman. We’re excited to have you on board.</p>
+    <p>— With Love,</p>
+    <p><i>The Noor Al-Iman Team<i></p>
+    </div>
+    `
   });
-  console.log('📧 Welcome email sent:', info.messageId);
 }
-
 module.exports = { sendWelcomeEmail };
