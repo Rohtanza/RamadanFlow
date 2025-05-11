@@ -4,11 +4,10 @@ A comprehensive Islamic application designed to enhance your Ramadan experience 
 
 ## Features
 
-### Prayer & Worship
+### Prayer 
 - Prayer time tracking with location-based calculations
 - Digital Tasbih counter with customizable dhikr
 - Prayer logs and statistics
-- Qibla direction finder
 
 ### Quran Features
 - Complete Quran with translation
@@ -22,7 +21,6 @@ A comprehensive Islamic application designed to enhance your Ramadan experience 
 - Real-time messaging
 - Comments and interactions
 - Activity tracking
-- Event management
 
 ### Personal Development
 - Ramadan goal setting and tracking
@@ -58,7 +56,7 @@ A comprehensive Islamic application designed to enhance your Ramadan experience 
 - npm or yarn
 - Google OAuth credentials
 - MapBox API key
-- Twilio account (optional)
+- Mailtrap (optional)
 
 ## Installation
 
