@@ -4,6 +4,9 @@ const auth = require('../middleware/auth');
 const RecitationProgress = require('../models/RecitationProgress');
 const { fetchSurah, getAudioUrl } = require('../services/quranService');
 
+
+//Bookmark implementation
+
 // @route   GET /api/quran/progress
 // @desc    Get current user’s bookmark
 // @access  Private
